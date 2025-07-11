@@ -21,7 +21,7 @@ app.use(express.json());
 
 const cors = require('cors');
 app.use(cors({
-  origin: 'https://docconnect-server.onrender.com',
+  origin: 'https://docconnect-client.onrender.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
