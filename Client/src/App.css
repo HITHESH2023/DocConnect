@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Below are the custom styles for react-calendar to make it look
+  more integrated and rounded with Tailwind's aesthetic.
+  These were included in the previous immersive as well.
+*/
+.react-calendar {
+  border-radius: 0.75rem; /* rounded-xl */
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  font-family: 'Inter', sans-serif; /* Use Inter font */
+}
+
+.react-calendar__tile--active {
+  background-color: #3b82f6 !important; /* blue-500 */
+  color: white !important;
+  border-radius: 0.5rem; /* rounded-lg */
+}
+
+.react-calendar__tile--now {
+  background-color: #bfdbfe !important; /* blue-200 */
+  border-radius: 0.5rem;
+}
+
+.react-calendar__navigation button {
+  min-width: 44px; /* Ensure sufficient touch target size */
+  background: none;
+  font-size: 1.5em;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 0.5rem;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: #e0e7ff; /* indigo-100 */
+  border-radius: 0.5rem;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #ef4444; /* red-500 */
+}
