@@ -9,19 +9,18 @@ import MessageModal from '../components/MessageModal';
 // Stripe Imports
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import CheckoutForm from '../components/CheckoutForm'; // We will create this component
+import CheckoutForm from '../components/CheckoutForm';
 
-// Load Stripe outside of render to avoid recreating it on every render
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 export default function BookAppointment() {
   const [searchParams] = useSearchParams();
   const [doctorId, setDoctorId] = useState('');
   const [date, setDate] = useState(new Date());
-  const [consultationFee, setConsultationFee] = useState(0); // To display fee
-  const [paymentOption, setPaymentOption] = useState('offline'); // 'offline' or 'online'
-  const [appointmentId, setAppointmentId] = useState(null); // To store booked appointment ID
-  const [clientSecret, setClientSecret] = useState(null); // For Stripe
+  const [consultationFee, setConsultationFee] = useState(0);
+  const [paymentOption, setPaymentOption] = useState('offline');
+  const [appointmentId, setAppointmentId] = useState(null);
+  const [clientSecret, setClientSecret] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [modalTitle, setModalTitle] = useState('');
@@ -29,23 +28,18 @@ export default function BookAppointment() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
-  // Helper to format date to YYYY-MM-DD
   const formatDate = (d) => {
     if (!d) return '';
     return new Date(d).toISOString().split('T')[0];
   };
 
-  // Pre-fill from URL params
   useEffect(() => {
     const doctorIdParam = searchParams.get('doctorId');
     const dateParam = searchParams.get('date');
 
     if (doctorIdParam) setDoctorId(doctorIdParam);
     if (dateParam) setDate(new Date(dateParam));
-
-    // Fetch doctor's fee or set a default
-    // In a real app, you'd fetch this from the doctor's profile or a fixed price list
-    setConsultationFee(5000); // Example: 5000 cents = $50.00
+    setConsultationFee(5000);
   }, [searchParams]);
 
   const handleBookAppointment = async (paymentStatus = 'offline') => {
@@ -58,17 +52,15 @@ export default function BookAppointment() {
     }
 
     try {
-      // First, book the appointment
       const res = await API.post('/appointments', {
         doctorId,
         date: formatDate(date),
-        paymentStatus: paymentStatus // Pass payment status to backend
+        paymentStatus: paymentStatus
       });
 
-      setAppointmentId(res.data.appointment._id); // Save appointment ID
+      setAppointmentId(res.data.appointment._id);
 
       if (paymentStatus === 'online') {
-        // If online payment, create Payment Intent
         const paymentIntentRes = await API.post('/payment/create-payment-intent', {
           appointmentId: res.data.appointment._id,
           amount: consultationFee,
@@ -79,7 +71,6 @@ export default function BookAppointment() {
         setModalType('info');
         setIsModalOpen(true);
       } else {
-        // Offline payment
         setModalTitle('Appointment Booked!');
         setModalMessage(`Your appointment is booked for ${formatDate(date)} at ${res.data.appointment.time}. You will pay offline.`);
         setModalType('success');
@@ -100,21 +91,25 @@ export default function BookAppointment() {
 
   if (!user || user.role !== 'patient') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-red-500 text-xl font-semibold">Access Denied. Patients only.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <p className="text-red-500 text-lg sm:text-xl font-semibold text-center">
+          Access Denied. Patients only.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:scale-105">
-        <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-8">Book Appointment</h2>
+      <div className="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-lg transform transition-all duration-300 hover:scale-105">
+        <h2 className="text-2xl sm:text-4xl font-extrabold text-center text-gray-800 mb-6 sm:mb-8">
+          Book Appointment
+        </h2>
         <div className="space-y-6">
           <div>
             <label className="block text-gray-700 text-sm font-bold mb-2">Doctor ID:</label>
             <input
-              className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 placeholder-gray-500 text-lg"
+              className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 placeholder-gray-500 text-base sm:text-lg"
               placeholder="Doctor ID"
               value={doctorId}
               onChange={(e) => setDoctorId(e.target.value)}
@@ -125,15 +120,16 @@ export default function BookAppointment() {
             <DatePicker
               selected={date}
               onChange={(d) => setDate(d)}
-              className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 text-lg"
+              className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 text-base sm:text-lg"
               dateFormat="yyyy-MM-dd"
             />
           </div>
 
-          {/* Payment Options */}
           <div className="mt-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Consultation Fee: ${consultationFee / 100}</label>
-            <div className="flex items-center space-x-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Consultation Fee: ${consultationFee / 100}
+            </label>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-3 sm:space-y-0">
               <label className="inline-flex items-center">
                 <input
                   type="radio"
@@ -143,10 +139,10 @@ export default function BookAppointment() {
                   checked={paymentOption === 'offline'}
                   onChange={(e) => {
                     setPaymentOption(e.target.value);
-                    setClientSecret(null); // Reset Stripe if switching to offline
+                    setClientSecret(null);
                   }}
                 />
-                <span className="ml-2 text-gray-700">Pay Offline</span>
+                <span className="ml-2 text-gray-700 text-sm sm:text-base">Pay Offline</span>
               </label>
               <label className="inline-flex items-center">
                 <input
@@ -157,7 +153,7 @@ export default function BookAppointment() {
                   checked={paymentOption === 'online'}
                   onChange={(e) => setPaymentOption(e.target.value)}
                 />
-                <span className="ml-2 text-gray-700">Pay Online</span>
+                <span className="ml-2 text-gray-700 text-sm sm:text-base">Pay Online</span>
               </label>
             </div>
           </div>
@@ -165,7 +161,7 @@ export default function BookAppointment() {
           {paymentOption === 'offline' && (
             <button
               onClick={() => handleBookAppointment('offline')}
-              className="w-full bg-blue-600 text-white p-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition duration-300 shadow-lg transform hover:-translate-y-1"
+              className="w-full bg-blue-600 text-white p-3 sm:p-4 rounded-lg font-bold text-lg sm:text-xl hover:bg-blue-700 transition duration-300 shadow-lg transform hover:-translate-y-1"
             >
               Book Appointment (Pay Offline)
             </button>
@@ -180,12 +176,11 @@ export default function BookAppointment() {
           {paymentOption === 'online' && !clientSecret && (
             <button
               onClick={() => handleBookAppointment('online')}
-              className="w-full bg-purple-600 text-white p-4 rounded-lg font-bold text-xl hover:bg-purple-700 transition duration-300 shadow-lg transform hover:-translate-y-1"
+              className="w-full bg-purple-600 text-white p-3 sm:p-4 rounded-lg font-bold text-lg sm:text-xl hover:bg-purple-700 transition duration-300 shadow-lg transform hover:-translate-y-1"
             >
               Book Appointment & Proceed to Pay
             </button>
           )}
-
         </div>
       </div>
       <MessageModal
