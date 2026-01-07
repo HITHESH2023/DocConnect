@@ -68,6 +68,32 @@ router.get("/available/:date", async (req, res) => {
   }
 });
 
+// GET /api/doctors/search
+// ?state=&city=&pincode=
+router.get("/search", async (req, res) => {
+  try {
+    const { state, city, pincode } = req.query;
+
+    const query = { role: "doctor" };
+
+    if (state) {
+      query.state = new RegExp(`^${state}$`, "i");
+    }
+    if (city) {
+      query.city = new RegExp(`^${city}$`, "i");
+    }
+    if (pincode) {
+      query.pincode = pincode;
+    }
+
+    const doctors = await User.find(query).select("-password");
+
+    res.json(doctors);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+});
+
 // Optional: Get a single doctor's profile by ID (useful for detailed view)
 router.get("/profile/:doctorId", async (req, res) => {
   try {

@@ -5,7 +5,7 @@ const User = require("../models/User");
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-  const { name, email, password, role, profileImage, specialty, bio } = req.body; // Added new fields
+  const { name, email, password, role, profileImage, specialty, bio, state, city, pincode } = req.body; // Added new fields
   try {
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ msg: "User already exists" });
@@ -16,9 +16,12 @@ router.post("/register", async (req, res) => {
       email,
       password: hash,
       role,
-      profileImage: role === 'doctor' ? profileImage : undefined, // Only save for doctors
-      specialty: role === 'doctor' ? specialty : undefined,       // Only save for doctors
-      bio: role === 'doctor' ? bio : undefined                    // Only save for doctors
+      profileImage: role === "doctor" ? profileImage : undefined,
+      specialty: role === "doctor" ? specialty : undefined,
+      bio: role === "doctor" ? bio : undefined,
+      state: role === "doctor" ? state : undefined,
+      city: role === "doctor" ? city : undefined,
+      pincode: role === "doctor" ? pincode : undefined,
     });
 
     // Include name in JWT payload

@@ -9,10 +9,14 @@ export default function Register() {
     email: "",
     password: "",
     role: "patient",
-    profileImage: "",
     specialty: "",
-    bio: ""
+    bio: "",
+    profileImage: "",
+    state: "",
+    city: "",
+    pincode: ""
   });
+
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -96,6 +100,24 @@ export default function Register() {
                 value={form.bio}
                 onChange={(e) => setForm({ ...form, bio: e.target.value })}
               ></textarea>
+              <input
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 placeholder-gray-500 text-base sm:text-lg"
+                placeholder="State"
+                value={form.state}
+                onChange={(e) => setForm({ ...form, state: e.target.value })}
+              />
+              <input
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 placeholder-gray-500 text-base sm:text-lg"
+                placeholder="City / District"
+                value={form.city}
+                onChange={(e) => setForm({ ...form, city: e.target.value })}
+              />
+              <input
+                className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 placeholder-gray-500 text-base sm:text-lg"
+                placeholder="Pincode"
+                value={form.pincode}
+                onChange={(e) => setForm({ ...form, pincode: e.target.value })}
+              />
             </>
           )}
 
