@@ -72,27 +72,58 @@ router.get("/available/:date", async (req, res) => {
 // ?state=&city=&pincode=
 router.get("/search", async (req, res) => {
   try {
-    const { state, city, pincode } = req.query;
+    const { state, city, pincode, date } = req.query;
 
     const query = { role: "doctor" };
 
-    if (state) {
-      query.state = new RegExp(`^${state}$`, "i");
-    }
-    if (city) {
-      query.city = new RegExp(`^${city}$`, "i");
-    }
-    if (pincode) {
-      query.pincode = pincode;
-    }
+    if (state) query.state = new RegExp(`^${state}$`, "i");
+    if (city) query.city = new RegExp(`^${city}$`, "i");
+    if (pincode) query.pincode = pincode;
 
     const doctors = await User.find(query).select("-password");
 
-    res.json(doctors);
+    const results = [];
+
+    for (const doctor of doctors) {
+      let availabilityData = {
+        isAvailable: false,
+        remainingSlots: 0
+      };
+
+      if (date) {
+        const availability = await Availability.findOne({
+          doctorId: doctor._id,
+          date
+        });
+
+        if (availability) {
+          const bookedCount = await Appointment.countDocuments({
+            doctorId: doctor._id,
+            date
+          });
+
+          const remainingSlots =
+            availability.totalSlots - bookedCount;
+
+          availabilityData = {
+            isAvailable: remainingSlots > 0,
+            remainingSlots
+          };
+        }
+      }
+
+      results.push({
+        ...doctor.toObject(),
+        availability: availabilityData
+      });
+    }
+
+    res.json(results);
   } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 });
+
 
 // Optional: Get a single doctor's profile by ID (useful for detailed view)
 router.get("/profile/:doctorId", async (req, res) => {

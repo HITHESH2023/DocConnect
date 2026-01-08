@@ -195,7 +195,7 @@ export default function PatientDashboard() {
                 {availableDoctors.map((doctor) => (
                   <div key={doctor._id} className="bg-white p-5 rounded-lg shadow text-center">
                     <img
-                      src={doctor.profileImage || "https://placehold.co/100x100"}
+                      src={doctor.profileImage || "https://placehold.co/150x150/aabbcc/ffffff?text=DR"}
                       alt={doctor.name}
                       className="w-24 h-24 rounded-full mx-auto mb-3"
                     />

@@ -112,7 +112,7 @@ router.post("/register-user", adminAuth, async (req, res) => {
       email,
       password: hashedPassword,
       role,
-      profileImage: role === "doctor" ? profileImage : undefined,
+      profileImage: role === "doctor" && profileImage?.trim() ? profileImage : undefined,
       specialty: role === "doctor" ? specialty : undefined,
       bio: role === "doctor" ? bio : undefined,
       state: role === "doctor" ? state : undefined,

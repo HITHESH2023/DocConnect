@@ -11,7 +11,7 @@ export default function Register() {
     role: "patient",
     specialty: "",
     bio: "",
-    profileImage: "",
+    profileImage: "https://placehold.co/150x150/aabbcc/ffffff?text=DR",
     state: "",
     city: "",
     pincode: ""

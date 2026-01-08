@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
       email,
       password: hash,
       role,
-      profileImage: role === "doctor" ? profileImage : undefined,
+      profileImage: role === "doctor" && profileImage?.trim() ? profileImage : undefined,
       specialty: role === "doctor" ? specialty : undefined,
       bio: role === "doctor" ? bio : undefined,
       state: role === "doctor" ? state : undefined,
